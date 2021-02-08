@@ -1,0 +1,93 @@
+//
+//  ViewController.swift
+//  Quiz_13-02
+//
+//  Created by 이민우 on 2021/02/08.
+//
+
+import UIKit
+
+class ViewController: UIViewController {
+
+    @IBOutlet weak var imgView: UIImageView!
+    @IBOutlet weak var pageControl: UIPageControl!
+    
+    // 페이지
+    var images = ["flower_01.png", "flower_02.png", "flower_03.png", "flower_04.png", "flower_05.png", "flower_06.png"]
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        // 페이지 설정
+        pageControl.currentPage = 0
+        pageControl.numberOfPages = images.count
+        
+        // 초기 이미지 설정
+        imgView.image = UIImage(named: images[0])
+        
+        // 한 손가락 Gesture 구성
+        makeSingleTouch()
+        
+    }
+
+    // pageControl Action
+    @IBAction func pageChange(_ sender: UIPageControl) {
+        imgView.image = UIImage(named: images[pageControl.currentPage])
+    }
+
+    // selector 설정 (한 손가락)
+    @objc func respondToSwipeGesture(_ gesture : UIGestureRecognizer){
+        if let swipeGesture = gesture as? UISwipeGestureRecognizer{
+
+            // 방향값에 따라 이미지 변경
+            switch swipeGesture.direction{
+            case UISwipeGestureRecognizer.Direction.left:
+                pagePrevious() // 이전 페이지 이동 함수
+            case UISwipeGestureRecognizer.Direction.right:
+                pageNext() // 다음 페이지 이동 함수
+            default:
+                break;
+            }
+        }
+    }
+
+    // Gesture 함수
+    func makeSingleTouch(){
+        
+        // left
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(ViewController.respondToSwipeGesture(_ :)))
+        swipeLeft.direction = UISwipeGestureRecognizer.Direction.left
+        self.view.addGestureRecognizer(swipeLeft)
+        
+        // right
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(ViewController.respondToSwipeGesture(_ :)))
+        swipeRight.direction = UISwipeGestureRecognizer.Direction.right
+        self.view.addGestureRecognizer(swipeRight)
+    }
+    
+    // 이전 페이지 이동 함수
+    func pagePrevious(){
+        if pageControl.currentPage - 1 < 0{ // 0페이지에서 왼쪽으로 swipe할 경우
+            pageControl.currentPage = 5
+            imgView.image = UIImage(named: images[pageControl.currentPage])
+        }else{
+            pageControl.currentPage = pageControl.currentPage - 1
+            imgView.image = UIImage(named: images[pageControl.currentPage])
+        }
+    }
+    
+    // 다음 페이지 이동 함수
+    func pageNext(){
+        if pageControl.currentPage + 1 > 5{ // 5페이지에서 오른쪽으로 swipe할 경우
+            pageControl.currentPage = 0
+            imgView.image = UIImage(named: images[pageControl.currentPage])
+        }else{
+            pageControl.currentPage = pageControl.currentPage + 1
+            imgView.image = UIImage(named: images[pageControl.currentPage])
+        }
+    }
+    
+    
+    
+}
+
